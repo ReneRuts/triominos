@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* One place to retheme the whole site: change the brand colours. */
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+
+    --color-brand-50: #eef6f4;
+    --color-brand-100: #d5ebe6;
+    --color-brand-200: #abd6cd;
+    --color-brand-500: #2f8f80;
+    --color-brand-600: #1f7a6c;
+    --color-brand-700: #18635a;
+    --color-brand-800: #154f49;
+    --color-brand-900: #12403c;
+
+    --color-paper: #f7f5f0;
+}
+
+@layer base {
+    body {
+        @apply bg-paper font-sans text-stone-800 antialiased;
+    }
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* Long-form text: rulebook, guide, privacy and cookie pages. */
+@layer components {
+    .doc { @apply leading-relaxed text-stone-700; }
+    .doc h2 { @apply mt-10 mb-3 scroll-mt-24 text-xl font-semibold text-stone-900; }
+    .doc h3 { @apply mt-6 mb-2 font-semibold text-stone-900; }
+    .doc p { @apply mb-3; }
+    .doc ul { @apply mb-3 list-disc space-y-1 pl-5; }
+    .doc ol { @apply mb-3 list-decimal space-y-1 pl-5; }
+    .doc a { @apply font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900; }
+    .doc table { @apply mb-4 w-full text-left text-sm; }
+    .doc th { @apply border-b border-stone-300 py-2 pr-4 font-semibold text-stone-900; }
+    .doc td { @apply border-b border-stone-100 py-2 pr-4 align-top; }
+}
