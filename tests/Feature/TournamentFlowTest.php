@@ -41,7 +41,7 @@ class TournamentFlowTest extends TestCase
         ]));
     }
 
-    private function game(Tournament $t): Game
+    private function game(Tournament $t): ?Game
     {
         return $t->fresh()->load('games')->activeGame();
     }

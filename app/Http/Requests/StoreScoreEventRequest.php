@@ -6,16 +6,17 @@ use App\Models\Player;
 use App\Scoring\ScoreCalculator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class StoreScoreEventRequest extends FormRequest
 {
     public function rules(): array
     {
-        $digit = ['required_if:type,tile', 'nullable', 'integer', 'min:0', 'max:'.ScoreCalculator::MAX_DIGIT];
+        $digit = ['required_if:type,tile', 'nullable', 'integer', 'min:0', 'max:' . ScoreCalculator::MAX_DIGIT];
 
         return [
             'type' => ['required', 'in:tile,draw,pass'],
-            'player_id' => ['required', 'integer', Rule::in($this->route('game')->players->pluck('id')->all())],
+            'player_id' => ['required', Rule::in($this->route('game')->players->pluck('id')->all())],
             'digit_a' => $digit,
             'digit_b' => $digit,
             'digit_c' => $digit,
@@ -24,20 +25,35 @@ class StoreScoreEventRequest extends FormRequest
         ];
     }
 
+    public function after(): array
+    {
+        return [function (Validator $validator) {
+            $game = $this->route('game');
+
+            if ($game && ! $game->isActive()) {
+                $validator->errors()->add('game', 'Het spel is al afgesloten.');
+            }
+        }];
+    }
+
     public function messages(): array
     {
-        $range = 'Cijfers gaan van 0 tot '.ScoreCalculator::MAX_DIGIT.'.';
+        $range = 'Cijfers gaan van 0 tot ' . ScoreCalculator::MAX_DIGIT . '.';
         $all = 'Vul alle drie de cijfers van de steen in.';
 
         return [
-            'digit_a.required_if' => $all, 'digit_b.required_if' => $all, 'digit_c.required_if' => $all,
-            'digit_a.max' => $range, 'digit_b.max' => $range, 'digit_c.max' => $range,
+            'digit_a.required_if' => $all,
+            'digit_b.required_if' => $all,
+            'digit_c.required_if' => $all,
+            'digit_a.max' => $range,
+            'digit_b.max' => $range,
+            'digit_c.max' => $range,
         ];
     }
 
     public function player(): Player
     {
-        return $this->route('game')->players->firstWhere('id', (int) $this->validated('player_id'));
+        return $this->route('game')->players->firstWhere('id', $this->validated('player_id'));
     }
 
     /** @return array{0:int,1:int,2:int} */

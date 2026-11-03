@@ -22,7 +22,9 @@ class ScoreEventController extends Controller
 
         match ($request->validated('type')) {
             'tile' => $scores->tile(
-                $game, $player, $request->digits(),
+                $game,
+                $player,
+                $request->digits(),
                 ['bridge' => $request->boolean('bridge'), 'hexagons' => $request->validated('hexagons')],
                 $request->filled('manual_points') ? (int) $request->validated('manual_points') : null,
                 $by,
@@ -39,10 +41,10 @@ class ScoreEventController extends Controller
         Gate::authorize('play', $game);
 
         $data = $request->validate([
-            'player_id' => ['required', 'integer', Rule::in($game->players->pluck('id')->all())],
+            'player_id' => ['required', Rule::in($game->players->pluck('id')->all())],
         ]);
 
-        $scores->timeout($game, $game->players->firstWhere('id', (int) $data['player_id']), $request->user());
+        $scores->timeout($game, $game->players->firstWhere('id', $data['player_id']), $request->user());
 
         return back();
     }

@@ -62,7 +62,7 @@
         <section class="mt-14 grid gap-6 md:grid-cols-3">
             <div>
                 <h2 class="font-semibold text-stone-900">Toernooien</h2>
-                <p class="mt-2 text-sm leading-relaxed text-stone-600">Meerdere spellen met dezelfde spelers. Wie als eerste het doel haalt, beslist het toernooi op totaal aantal punten.</p>
+                <p class="mt-2 text-sm leading-relaxed text-stone-600">Meerdere spellen met dezelfde spelers. Wie als eerste het doel haalt, wint het toernooi op totaal aantal punten.</p>
             </div>
             <div>
                 <h2 class="font-semibold text-stone-900">Losse spellen</h2>
@@ -78,7 +78,7 @@
             <h2 class="text-2xl font-semibold tracking-tight text-stone-900">Zo werkt het</h2>
             <ol class="mt-6 grid gap-4 md:grid-cols-3">
                 @foreach ([
-                    ['1', 'Kies je spelers', 'Vrienden met een account, of gasten die je gewoon een naam geeft.'],
+                    ['1', 'Kies je spelers', 'Vrienden met een account, of gasten waarvan je gewoon de naam invult.'],
                     ['2', 'Vul de stenen in', 'Typ de drie cijfers van elke steen. Bonussen, bijnemen en passen rekent de site uit.'],
                     ['3', 'Sluit het spel af', 'Geef aan wie zijn stenen kwijt is. De winnaar en de stand staan meteen vast.'],
                 ] as [$n, $title, $text])
@@ -108,8 +108,9 @@
                 @foreach ([
                     ['Is het gratis?', 'Ja. Je maakt een account aan en kan meteen spelen.'],
                     ['Moeten mijn medespelers een account hebben?', 'Nee. Gasten krijgen een naam en volgen de stand via een link. Alleen spelers met een account komen in de ranking.'],
-                    ['Wat is het verschil tussen een toernooi en een los spel?', 'Een toernooi bestaat uit meerdere spellen: de punten tellen op en wie het doel haalt, beslist het toernooi. Een los spel is één spel zonder doelscore.'],
+                    ['Wat is het verschil tussen een toernooi en een los spel?', 'Een toernooi bestaat uit meerdere spellen: de punten tellen op en wie het doel haalt, wint het toernooi. Een los spel is één spel zonder doelscore.'],
                     ['Kan iemand anders meekijken?', 'Ja, via de live link of het korte spel-ID. Meekijkers kunnen niets aanpassen.'],
+                    ['Wat met mijn privacy?', 'Je account en spellen zijn privé. Alleen jij kan je spellen aanpassen. Meekijkers zien enkel de stand. Je kan een spel openbaar maken, zodat iedereen het kan volgen.'],
                 ] as [$q, $a])
                     <details class="group px-5 py-4">
                         <summary class="cursor-pointer font-medium text-stone-900">{{ $q }}</summary>

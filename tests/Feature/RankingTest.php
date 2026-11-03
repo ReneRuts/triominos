@@ -15,7 +15,7 @@ class RankingTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @param  array<int,int>  $results  user id => points; highest wins */
+    /** @param  array<string,int>  $results  user id => points; highest wins */
     private function finishedTournament(array $results, bool $public = true): Tournament
     {
         $t = Tournament::create(['creator_id' => array_key_first($results), 'name' => 'T', 'status' => Status::Finished, 'finished_at' => now(), 'is_public' => $public]);
@@ -81,10 +81,10 @@ class RankingTest extends TestCase
         $this->finishedTournament([$me->id => 100, $friend->id => 200, $stranger->id => 300]);
 
         $friends = $this->actingAs($me)->get('/ranking?scope=friends')->viewData('tournamentRanking');
-        $this->assertEqualsCanonicalizing([$me->id, $friend->id], $friends->pluck('user_id')->map(fn ($id) => (int) $id)->all());
+        $this->assertEqualsCanonicalizing([$me->id, $friend->id], $friends->pluck('user_id')->map(fn ($id) => (string) $id)->all());
 
         $selected = $this->actingAs($me)->get('/ranking?scope=selected&me=0&friends[]='.$friend->id)->viewData('tournamentRanking');
-        $this->assertSame([$friend->id], $selected->pluck('user_id')->map(fn ($id) => (int) $id)->all());
+        $this->assertSame([$friend->id], $selected->pluck('user_id')->map(fn ($id) => (string) $id)->all());
 
         // somebody who is not a friend is ignored
         $none = $this->actingAs($me)->get('/ranking?scope=selected&me=0&friends[]='.$stranger->id)->viewData('tournamentRanking');

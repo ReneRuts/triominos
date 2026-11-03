@@ -1,6 +1,7 @@
 <footer class="mt-16 border-t border-stone-200 bg-white">
-    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="lg:col-span-2">
+    <div class="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+
+        <div class="col-span-2 lg:col-span-2">
             <x-site.logo size="16" />
             <p class="mt-4 max-w-sm text-sm leading-relaxed text-stone-600">
                 Een gratis scorebord voor Triominos. Houd de punten bij van een los spel of een heel toernooi,
@@ -36,9 +37,12 @@
     <div class="border-t border-stone-100">
         <div
             class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-xs text-stone-500 sm:flex-row sm:justify-between">
-            <p>Gemaakt door <a class="hover:underline" href="https://reneruts.be" target="_blank">René Ruts</a></p>
-            <p>&copy; {{ date('Y') }} {{ config('site.name') }}. Niet verbonden aan de makers van Triominos.</p>
-            <p>Triominos is een merk van zijn eigenaar. Deze site is een onafhankelijk hulpmiddel.</p>
+            <p class="text-center md:text-left">Gemaakt door <a class="hover:underline" href="https://reneruts.be"
+                    target="_blank">René Ruts</a></p>
+            <p class="text-center md:text-left">&copy; {{ date('Y') }} {{ config('site.name') }}. Niet verbonden aan
+                de makers van Triominos.</p>
+            <p class="text-center md:text-left">Triominos is een merk van zijn eigenaar. Deze site is een onafhankelijk
+                hulpmiddel.</p>
         </div>
     </div>
 </footer>

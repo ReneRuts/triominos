@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class CookieConsentTest extends TestCase
 {
-    private function withCookie(?string $value): void
+    private function setConsentCookie(?string $value): void
     {
         $cookies = $value === null ? [] : [config('cookies.name') => $value];
         $this->app->instance('request', Request::create('/', 'GET', [], $cookies));
@@ -16,7 +16,7 @@ class CookieConsentTest extends TestCase
 
     public function test_no_cookie_means_undecided_and_no_optional_scripts(): void
     {
-        $this->withCookie(null);
+        $this->setConsentCookie(null);
 
         $this->assertNull(CookieConsent::level());
         $this->assertFalse(CookieConsent::decided());
@@ -27,20 +27,20 @@ class CookieConsentTest extends TestCase
     {
         $v = config('cookies.version');
 
-        $this->withCookie("all:$v");
+        $this->setConsentCookie("all:$v");
         $this->assertTrue(CookieConsent::accepted());
 
-        $this->withCookie("necessary:$v");
+        $this->setConsentCookie("necessary:$v");
         $this->assertTrue(CookieConsent::decided());
         $this->assertFalse(CookieConsent::accepted());
     }
 
     public function test_old_version_or_garbage_asks_again(): void
     {
-        $this->withCookie('all:'.(config('cookies.version') + 1));
+        $this->setConsentCookie('all:'.(config('cookies.version') + 1));
         $this->assertNull(CookieConsent::level());
 
-        $this->withCookie('whatever');
+        $this->setConsentCookie('whatever');
         $this->assertNull(CookieConsent::level());
     }
 }

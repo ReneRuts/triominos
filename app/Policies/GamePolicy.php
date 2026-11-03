@@ -12,10 +12,10 @@ class GamePolicy
         return $game->canView($user);
     }
 
-    /** Players of a running spel enter scores. */
+    /** Players of a spel enter scores. */
     public function play(User $user, Game $game): bool
     {
-        return $game->isActive() && $game->hasPlayer($user);
+        return $game->hasPlayer($user) || $game->isCreator($user);
     }
 
     /** Players and the creator may remove a score. */

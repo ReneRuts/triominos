@@ -20,9 +20,18 @@ class Tournament extends Model
     use HasPublicId, HasShareLink;
 
     protected $fillable = [
-        'creator_id', 'name', 'status', 'mode', 'target_score', 'is_public',
-        'turn_time_limit', 'warnings_allowed', 'timeout_penalty_points', 'timeout_draw_tile',
-        'target_reached_at', 'finished_at',
+        'creator_id',
+        'name',
+        'status',
+        'mode',
+        'target_score',
+        'is_public',
+        'turn_time_limit',
+        'warnings_allowed',
+        'timeout_penalty_points',
+        'timeout_draw_tile',
+        'target_reached_at',
+        'finished_at',
     ];
 
     protected function casts(): array
@@ -68,12 +77,12 @@ class Tournament extends Model
 
     public function isCreator(?User $user): bool
     {
-        return $user !== null && (int) $user->id === (int) $this->creator_id;
+        return $user !== null && (string) $user->id === (string) $this->creator_id;
     }
 
     public function hasPlayer(?User $user): bool
     {
-        return $user !== null && $this->players->contains('user_id', $user->id);
+        return $user !== null && $this->players->contains(fn($p) => (string) $p->user_id === (string) $user->id);
     }
 
     /** Active toernooi: players only. Finished: players, and everybody with an account when it is public. */
@@ -100,7 +109,7 @@ class Tournament extends Model
 
     // --- Scores ----------------------------------------------------------------------------
 
-    /** @return array<int,int> player_id => total points over all spellen */
+    /** @return array<int|string,int> player_id => total points over all spellen */
     public function totals(): array
     {
         $sums = $this->scoreEvents()
@@ -108,7 +117,7 @@ class Tournament extends Model
             ->groupBy('score_events.player_id')
             ->pluck('total', 'player_id');
 
-        return $this->players->mapWithKeys(fn (Player $p) => [$p->id => (int) ($sums[$p->id] ?? 0)])->all();
+        return $this->players->mapWithKeys(fn(Player $p) => [$p->id => (int) ($sums[$p->id] ?? 0)])->all();
     }
 
     /**
@@ -117,9 +126,11 @@ class Tournament extends Model
      */
     public function refreshTargetReached(): void
     {
-        if ($this->target_reached_at === null
+        if (
+            $this->target_reached_at === null
             && $this->scoreEvents()->exists()
-            && max($this->totals()) >= $this->target_score) {
+            && max($this->totals() ?: [0]) >= $this->target_score
+        ) {
             $this->update(['target_reached_at' => now()]);
         }
     }

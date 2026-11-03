@@ -25,9 +25,22 @@ class Game extends Model
     use HasPublicId, HasShareLink;
 
     protected $fillable = [
-        'tournament_id', 'creator_id', 'name', 'number', 'status',
-        'mode', 'is_public', 'turn_time_limit', 'warnings_allowed', 'timeout_penalty_points', 'timeout_draw_tile',
-        'starting_player_id', 'winner_player_id', 'ended_by', 'remaining', 'finished_at',
+        'tournament_id',
+        'creator_id',
+        'name',
+        'number',
+        'status',
+        'mode',
+        'is_public',
+        'turn_time_limit',
+        'warnings_allowed',
+        'timeout_penalty_points',
+        'timeout_draw_tile',
+        'starting_player_id',
+        'winner_player_id',
+        'ended_by',
+        'remaining',
+        'finished_at',
     ];
 
     protected function casts(): array
@@ -80,7 +93,7 @@ class Game extends Model
     /** @return Attribute<Collection<int,Player>,never> */
     protected function players(): Attribute
     {
-        return Attribute::get(fn () => $this->tournament_id !== null
+        return Attribute::get(fn() => $this->tournament_id !== null
             ? $this->tournament->players
             : $this->ownPlayers);
     }
@@ -105,12 +118,12 @@ class Game extends Model
 
     public function isCreator(?User $user): bool
     {
-        return $user !== null && (int) $user->id === (int) $this->creator_id;
+        return $user !== null && (string) $user->id === (string) $this->creator_id;
     }
 
     public function hasPlayer(?User $user): bool
     {
-        return $user !== null && $this->players->contains('user_id', $user->id);
+        return $user !== null && $this->players->contains(fn($p) => (string) $p->user_id === (string) $user->id);
     }
 
     /** Spel inside a toernooi: follows the toernooi. Standalone: same rule as for a toernooi. */
@@ -125,7 +138,7 @@ class Game extends Model
 
     public function title(): string
     {
-        return $this->name ?: 'Spel '.$this->number;
+        return $this->name ?: 'Spel ' . $this->number;
     }
 
     // --- Turns -----------------------------------------------------------------------------
@@ -150,7 +163,7 @@ class Game extends Model
             return null;
         }
 
-        $start = $players->search(fn (Player $p) => (int) $p->id === (int) $this->starting_player_id);
+        $start = $players->search(fn(Player $p) => (string) $p->id === (string) $this->starting_player_id);
         $start = $start === false ? 0 : $start;
         $turns = $this->events()->reorder()->whereIn('type', ScoreEventType::turnEnders())->count();
 
@@ -159,7 +172,7 @@ class Game extends Model
 
     // --- Scores ----------------------------------------------------------------------------
 
-    /** @return array<int,int> player_id => points in this spel */
+    /** @return array<int|string,int> player_id => points in this spel */
     public function totals(): array
     {
         $sums = $this->events()->reorder()
@@ -167,7 +180,7 @@ class Game extends Model
             ->groupBy('player_id')
             ->pluck('total', 'player_id');
 
-        return $this->players->mapWithKeys(fn (Player $p) => [$p->id => (int) ($sums[$p->id] ?? 0)])->all();
+        return $this->players->mapWithKeys(fn(Player $p) => [$p->id => (int) ($sums[$p->id] ?? 0)])->all();
     }
 
     /** Fingerprint used by open pages to notice that somebody else changed something. */

@@ -25,8 +25,8 @@ class HomeTest extends TestCase
         $game = $this->makeStandalone($me);
 
         foreach ([$tournament, $game] as $model) {
-            $this->assertMatchesRegularExpression('/^[A-HJ-NP-Z2-9]{8}$/', $model->join_code);
-            $this->assertMatchesRegularExpression('/^[A-Z0-9]{4}-[A-Z0-9]{4}$/', $model->joinCodeLabel());
+            $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]{8}$/', $model->join_code);
+            $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}$/', $model->joinCodeLabel());
         }
         $this->assertNotSame($tournament->join_code, $game->join_code);
     }

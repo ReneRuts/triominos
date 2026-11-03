@@ -28,15 +28,18 @@ class User extends Authenticatable
         return $this->hasMany(Player::class);
     }
 
-    /** IDs of everybody with an accepted friendship with this user. */
+    /** @return array<int, string> IDs of everybody with an accepted friendship with this user. */
     public function friendIds(): array
     {
-        return Friendship::query()
-            ->where('status', 'accepted')
-            ->where(fn ($q) => $q->where('requester_id', $this->id)->orWhere('addressee_id', $this->id))
-            ->get(['requester_id', 'addressee_id'])
-            ->map(fn ($f) => (int) ((int) $f->requester_id === (int) $this->id ? $f->addressee_id : $f->requester_id))
-            ->unique()
+        // Retrieve all accepted friend IDs as string UUIDs
+        return Friendship::where('status', 'accepted')
+            ->where(function ($query) {
+                $query->where('requester_id', $this->id)
+                    ->orWhere('addressee_id', $this->id);
+            })
+            ->get()
+            ->map(fn($f) => $f->requester_id === $this->id ? $f->addressee_id : $f->requester_id)
+            ->map(fn($id) => (string) $id)
             ->values()
             ->all();
     }

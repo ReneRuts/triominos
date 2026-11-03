@@ -36,7 +36,7 @@ trait HasShareLink
     /** Short, easy to type ID (no 0/O/1/I). Unique across tournaments AND games, so one input field finds both. */
     public static function newCode(): string
     {
-        $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
 
         do {
             $code = '';

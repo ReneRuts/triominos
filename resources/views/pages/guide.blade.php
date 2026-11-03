@@ -39,7 +39,7 @@
     </ul>
 
     <h2>5. Een spel afsluiten</h2>
-    <p>Is een speler zijn stenen kwijt, of zit het spel vast? Kies <em>Het spel is afgelopen</em>, geef de winnaar aan en vul de waarde van de stenen die nog over zijn. De eindpunten worden automatisch bijgeschreven.</p>
+    <p>Is een speler zijn stenen kwijt, of is het spel geblokkeerd? Kies <em>Het spel is afgelopen</em>, geef de winnaar aan en vul de waarde van de stenen die nog over zijn in. De eindpunten worden automatisch berekend.</p>
 
     <h2>6. Een toernooi afronden</h2>
     <p>Haalt iemand de doelscore, dan speel je het lopende spel nog uit. Daarna kan de spelmaker het toernooi afronden: de speler met de meeste punten wint. Wil je toch verder spelen? Verhoog dan de doelscore.</p>

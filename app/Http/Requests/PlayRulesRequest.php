@@ -29,7 +29,7 @@ abstract class PlayRulesRequest extends FormRequest
             'timeout_penalty_points' => ['nullable', 'integer', 'min:0', 'max:100'],
             'timeout_draw_tile' => ['sometimes', 'boolean'],
             'players' => ['nullable', 'array', 'max:5'],
-            'players.*' => ['integer', 'distinct'],
+            'players.*' => ['string', 'uuid', 'distinct'],
             'guests' => ['nullable', 'array', 'max:5'],
             'guests.*' => ['nullable', 'string', 'max:40'],
         ];
@@ -52,7 +52,7 @@ abstract class PlayRulesRequest extends FormRequest
             }
 
             $guests = $this->guestNames();
-            if ($guests->map(fn ($n) => mb_strtolower($n))->duplicates()->isNotEmpty()) {
+            if ($guests->map(fn($n) => mb_strtolower($n))->duplicates()->isNotEmpty()) {
                 $validator->errors()->add('guests', 'Twee gasten hebben dezelfde naam.');
 
                 return;
@@ -69,17 +69,17 @@ abstract class PlayRulesRequest extends FormRequest
         }];
     }
 
-    /** @return array<int,int> */
+    /** @return array<int,string> */
     public function friendIds(): array
     {
-        return array_map('intval', (array) $this->input('players', []));
+        return array_map('strval', (array) $this->input('players', []));
     }
 
     /** @return Collection<int,string> guests without account (empty fields dropped) */
     public function guestNames(): Collection
     {
         return collect((array) $this->input('guests', []))
-            ->map(fn ($n) => trim((string) $n))
+            ->map(fn($n) => trim((string) $n))
             ->filter()
             ->values();
     }

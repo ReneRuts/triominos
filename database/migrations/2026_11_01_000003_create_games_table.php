@@ -20,7 +20,7 @@ return new class extends Migration
 
             // Rules. Always filled: a spel in a toernooi gets a copy of the toernooi rules when it starts.
             $table->string('mode', 10)->default('add');
-            $table->boolean('is_public')->default(true);
+            $table->boolean('is_public')->default(false);
             $table->unsignedSmallInteger('turn_time_limit')->nullable();
             $table->unsignedTinyInteger('warnings_allowed')->default(0);
             $table->smallInteger('timeout_penalty_points')->default(0);

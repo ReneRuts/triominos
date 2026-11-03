@@ -27,7 +27,7 @@ class PublicPagesTest extends TestCase
     public function test_rulebook_guide_and_policies_have_their_content(): void
     {
         $this->get('/spelregels')->assertSee('Spelregels van Triominos')->assertSee('Einde van een spel');
-        $this->get('/handleiding')->assertSee('Toernooi of los spel')->assertSee('Zitvolgorde en beginspeler');
+        $this->get('/handleiding')->assertSee('Eerst: toernooi of los spel?')->assertSee('Zitvolgorde en beginspeler');
         $this->get('/privacy')->assertSee('Privacybeleid')->assertSee(config('site.owner.email'));
         $this->get('/cookies')->assertSee('Noodzakelijke cookies')->assertSee('cookie_consent');
     }
