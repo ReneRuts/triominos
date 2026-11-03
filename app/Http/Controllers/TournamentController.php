@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Games\ChangeVisibility;
 use App\Actions\Tournaments\CreateTournament;
 use App\Actions\Tournaments\FinishTournament;
 use App\Enums\Status;
@@ -21,8 +22,8 @@ class TournamentController extends Controller
 
         $tournaments = Tournament::query()
             ->with('players.user', 'creator')
-            ->where(fn ($q) => $q->where('creator_id', $userId)
-                ->orWhereHas('players', fn ($p) => $p->where('user_id', $userId)))
+            ->where(fn($q) => $q->where('creator_id', $userId)
+                ->orWhereHas('players', fn($p) => $p->where('user_id', $userId)))
             ->latest('id')
             ->get();
 
@@ -42,7 +43,7 @@ class TournamentController extends Controller
 
         return view('tournaments.create', [
             'friends' => $request->user()->friends(),
-            'defaultName' => 'Toernooi '.($today + 1),
+            'defaultName' => 'Toernooi ' . ($today + 1),
         ]);
     }
 
@@ -113,7 +114,18 @@ class TournamentController extends Controller
         $tournament->update(['target_score' => (int) $data['target_score'], 'target_reached_at' => null]);
         $tournament->refreshTargetReached();
 
-        return back()->with('status', 'Doelscore aangepast naar '.$data['target_score'].'.');
+        return back()->with('status', 'Doelscore aangepast naar ' . $data['target_score'] . '.');
+    }
+
+    /** Private or public in the ranking, also while running or after it finished. */
+    public function updateVisibility(Request $request, Tournament $tournament, ChangeVisibility $change): RedirectResponse
+    {
+        Gate::authorize('manage', $tournament);
+
+        $isPublic = $request->boolean('is_public');
+        $change->handle($tournament, $isPublic);
+
+        return back()->with('status', $isPublic ? 'Het toernooi is nu openbaar.' : 'Het toernooi is nu privé.');
     }
 
     public function regenerateLink(Tournament $tournament): RedirectResponse

@@ -30,8 +30,9 @@ Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 Route::post('/join', [JoinController::class, 'store'])->middleware('throttle:15,1')->name('join');
 
 // Guests follow a toernooi or standalone spel live with the secret link or the game ID, no account needed.
+// Several viewers can share one IP address (same wifi), so the data limit is generous.
 Route::get('/live/{token}', [LiveController::class, 'show'])->name('live.show');
-Route::get('/live/{token}/data', [LiveController::class, 'data'])->middleware('throttle:60,1')->name('live.data');
+Route::get('/live/{token}/data', [LiveController::class, 'data'])->middleware('throttle:240,1')->name('live.data');
 Route::get('/claim/{token}/{player}', [ClaimController::class, 'start'])->name('claim.start');
 
 // --- Accounts -----------------------------------------------------------------------------
@@ -62,6 +63,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{tournament}/version', 'version')->name('version');
         Route::post('/{tournament}/finish', 'finish')->name('finish');
         Route::post('/{tournament}/target', 'updateTarget')->name('target');
+        Route::post('/{tournament}/visibility', 'updateVisibility')->name('visibility');
         Route::post('/{tournament}/link', 'regenerateLink')->name('link');
         Route::delete('/{tournament}', 'destroy')->name('destroy');
     });
@@ -77,8 +79,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/{game}/start', 'start')->name('start');
         Route::post('/{game}/finish', 'finish')->name('finish');
         Route::post('/{game}/reopen', 'reopen')->name('reopen');
+        Route::post('/{game}/visibility', 'updateVisibility')->name('visibility');
         Route::post('/{game}/link', 'regenerateLink')->name('link');
-        Route::patch('/{game}/visibility', 'updateVisibility')->name('visibility');
         Route::delete('/{game}', 'destroy')->name('destroy');
     });
 

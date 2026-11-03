@@ -12,19 +12,19 @@ class GamePolicy
         return $game->canView($user);
     }
 
-    /** Players of a spel enter scores. */
+    /** Only the creator of the spel enters scores. */
     public function play(User $user, Game $game): bool
     {
-        return $game->hasPlayer($user) || $game->isCreator($user);
+        return $game->isCreator($user);
     }
 
-    /** Players and the creator may remove a score. */
+    /** The creator may remove a score, as long as the spel is running. */
     public function edit(User $user, Game $game): bool
     {
-        return $game->isActive() && ($game->hasPlayer($user) || $game->isCreator($user));
+        return $game->isActive() && $game->isCreator($user);
     }
 
-    /** Lock scores, reopen. */
+    /** Lock scores, reopen, change visibility. */
     public function manage(User $user, Game $game): bool
     {
         return $game->isCreator($user);

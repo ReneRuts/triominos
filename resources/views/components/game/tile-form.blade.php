@@ -10,17 +10,23 @@
     <input type="hidden" name="type" value="tile">
     <input type="hidden" name="player_id" :value="playerId">
 
-    <div class="flex flex-wrap items-end gap-6">
-        <div>
-            <span class="mb-1 block text-sm font-medium text-stone-700">Cijfers van de steen</span>
-            <div class="flex gap-2">
-                @foreach (['a', 'b', 'c'] as $d)
-                    <input type="number" name="digit_{{ $d }}" x-model="{{ $d }}" x-ref="{{ $d }}" min="0" max="5"
-                        inputmode="numeric" placeholder="-" autocomplete="off" aria-label="Cijfer {{ strtoupper($d) }}"
-                        @focus="$event.target.select()" @click="$event.target.select()"
-                        class="h-12 w-14 rounded-lg border border-stone-300 text-center text-lg font-semibold focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                @endforeach
+    <div class="flex flex-wrap items-end gap-x-6 gap-y-4">
+        {{-- Phone: digits and button share one row. From sm up the wrapper disappears and the button moves to the end of the row. --}}
+        <div class="flex items-end gap-3 sm:contents">
+            <div>
+                <span class="mb-1 block text-sm font-medium text-stone-700">Cijfers van de steen</span>
+                <div class="flex gap-2">
+                    @foreach (['a', 'b', 'c'] as $d)
+                        <input type="text" name="digit_{{ $d }}" x-model="{{ $d }}" x-ref="{{ $d }}" maxlength="1"
+                            inputmode="numeric" pattern="[0-5]" placeholder="-" autocomplete="off" aria-label="Cijfer {{ strtoupper($d) }}"
+                            @focus="$event.target.select()" @click="$event.target.select()"
+                            @input="setDigit('{{ $d }}', $event)" @keydown.backspace="back('{{ $d }}', $event)"
+                            class="h-12 w-12 rounded-lg border border-stone-300 text-center text-lg font-semibold focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-200 sm:w-14">
+                    @endforeach
+                </div>
             </div>
+
+            <x-ui.button class="shrink-0 whitespace-nowrap sm:order-last sm:ml-auto" x-bind:disabled="!valid()">Steen noteren</x-ui.button>
         </div>
 
         <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
@@ -58,9 +64,5 @@
             <span>Totaal <span class="font-normal text-stone-500" x-show="manual !== ''">(handmatig)</span>@if ($drawsInTurn > 0)<span class="font-normal text-stone-500"> voor de steen</span>@endif</span>
             <span class="tabular-nums" x-text="total()"></span>
         </div>
-    </div>
-
-    <div class="mt-4 flex justify-end">
-        <x-ui.button x-bind:disabled="!valid()">Steen noteren</x-ui.button>
     </div>
 </form>

@@ -17,14 +17,7 @@
 
         <x-ui.page-header :title="$tournament->name" :subtitle="$subtitle" :back="route('tournaments.index')" back-label="Toernooien">
             @if ($isCreator)
-                @if ($tournament->isActive())
-                    <form method="POST" action="{{ route('tournaments.finish', $tournament) }}" class="flex gap-2">@csrf
-                        <x-ui.confirm-button label="Toernooi afronden" confirm="Ja, rond af" />
-                    </form>
-                @endif
-                <form method="POST" action="{{ route('tournaments.destroy', $tournament) }}" class="flex gap-2">@csrf @method('DELETE')
-                    <x-ui.confirm-button label="Verwijderen" confirm="Alles wissen?" variant="ghost" />
-                </form>
+                <x-tournament.header-actions :tournament="$tournament" />
             @endif
         </x-ui.page-header>
         <p class="-mt-4 mb-6 text-xs text-stone-400">Spelmaker: {{ $tournament->creator->username }}</p>

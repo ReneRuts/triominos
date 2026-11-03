@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Games\BeginStandaloneGame;
+use App\Actions\Games\ChangeVisibility;
 use App\Actions\Games\CreateStandaloneGame;
 use App\Actions\Games\FinishGame;
 use App\Actions\Games\ReopenGame;
@@ -123,6 +124,18 @@ class GameController extends Controller
         return back();
     }
 
+    /** Standalone spel: private or public in the ranking. Spellen of a toernooi follow the toernooi. */
+    public function updateVisibility(Request $request, Game $game, ChangeVisibility $change): RedirectResponse
+    {
+        Gate::authorize('manage', $game);
+        abort_unless($game->isStandalone(), 404);
+
+        $isPublic = $request->boolean('is_public');
+        $change->handle($game, $isPublic);
+
+        return back()->with('status', $isPublic ? 'Het spel is nu openbaar.' : 'Het spel is nu privé.');
+    }
+
     public function regenerateLink(Game $game): RedirectResponse
     {
         Gate::authorize('delete', $game); // standalone + creator
@@ -130,21 +143,6 @@ class GameController extends Controller
         $game->regenerateShareLink();
 
         return back()->with('status', 'Er is een nieuwe link en een nieuw spel-ID aangemaakt. De oude werken niet meer.');
-    }
-
-    public function updateVisibility(Request $request, Game $game)
-    {
-        abort_unless($game->isCreator($request->user()), 403, 'Alleen de maker kan dit aanpassen.');
-
-        $validated = $request->validate([
-            'is_public' => 'required|boolean',
-        ]);
-
-        $game->update([
-            'is_public' => $validated['is_public']
-        ]);
-
-        return back()->with('success', 'Zichtbaarheid van het spel is aangepast.');
     }
 
     public function destroy(Game $game): RedirectResponse

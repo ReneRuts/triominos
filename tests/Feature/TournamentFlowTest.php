@@ -21,7 +21,11 @@ class TournamentFlowTest extends TestCase
         Friendship::firstOrCreate(['requester_id' => $creator->id, 'addressee_id' => $friend->id], ['status' => 'accepted']);
 
         $this->actingAs($creator)->post('/tournaments', array_merge([
-            'name' => 'Testtoernooi', 'mode' => 'add', 'target_score' => 400, 'is_public' => 1, 'players' => [$friend->id],
+            'name' => 'Testtoernooi',
+            'mode' => 'add',
+            'target_score' => 400,
+            'is_public' => 1,
+            'players' => [$friend->id],
         ], $extra))->assertSessionHasNoErrors();
 
         $tournament = Tournament::latest('id')->first()->load('players');
@@ -37,7 +41,8 @@ class TournamentFlowTest extends TestCase
     private function startGame(User $by, Tournament $t, Player $starter, ?array $order = null)
     {
         return $this->actingAs($by)->post("/tournaments/{$t->public_id}/games", array_filter([
-            'order' => $order, 'starting_player_id' => $starter->id,
+            'order' => $order,
+            'starting_player_id' => $starter->id,
         ]));
     }
 
@@ -49,8 +54,11 @@ class TournamentFlowTest extends TestCase
     private function tile(User $by, Game $game, Player $player, array $digits, array $extra = [])
     {
         return $this->actingAs($by)->post("/games/{$game->public_id}/events", array_merge([
-            'type' => 'tile', 'player_id' => $player->id,
-            'digit_a' => $digits[0], 'digit_b' => $digits[1], 'digit_c' => $digits[2],
+            'type' => 'tile',
+            'player_id' => $player->id,
+            'digit_a' => $digits[0],
+            'digit_b' => $digits[1],
+            'digit_c' => $digits[2],
         ], $extra));
     }
 
@@ -62,7 +70,9 @@ class TournamentFlowTest extends TestCase
     private function endGame(User $by, Game $game, Player $winner, array $remaining, string $endedBy = 'emptied')
     {
         return $this->actingAs($by)->post("/games/{$game->public_id}/finish", [
-            'ended_by' => $endedBy, 'winner_player_id' => $winner->id, 'remaining' => $remaining,
+            'ended_by' => $endedBy,
+            'winner_player_id' => $winner->id,
+            'remaining' => $remaining,
         ]);
     }
 
@@ -76,7 +86,10 @@ class TournamentFlowTest extends TestCase
         [$me, $stranger] = User::factory()->count(2)->create();
 
         $this->actingAs($me)->post('/tournaments', [
-            'name' => 'X', 'mode' => 'add', 'target_score' => 400, 'players' => [$stranger->id],
+            'name' => 'X',
+            'mode' => 'add',
+            'target_score' => 400,
+            'players' => [$stranger->id],
         ])->assertSessionHasErrors('players');
     }
 
@@ -201,38 +214,41 @@ class TournamentFlowTest extends TestCase
         $this->assertSame(-5, $this->total($t, $b));
     }
 
-    public function test_only_players_can_score(): void
+    public function test_only_the_creator_can_score(): void
     {
         [$me, $friend, $outsider] = User::factory()->count(3)->create();
         $t = $this->tournament($me, $friend);
         $game = $this->game($t);
 
-        $this->event($friend, $game, $t->players->first(), 'draw')->assertRedirect();
+        $this->event($me, $game, $t->players->first(), 'draw')->assertRedirect();
         $this->assertSame(-5, $this->total($t, $t->players->first()));
 
+        $this->event($friend, $game, $t->players->first(), 'draw')->assertForbidden();
         $this->event($outsider, $game, $t->players->first(), 'draw')->assertForbidden();
+        $this->assertSame(-5, $this->total($t, $t->players->first()));
         $this->actingAs($outsider)->get("/games/{$game->public_id}")->assertForbidden();
     }
 
-    public function test_creator_can_lock_a_score_and_players_cannot_delete_it(): void
+    public function test_creator_can_lock_a_score_and_it_cannot_be_deleted_until_unlocked(): void
     {
         [$me, $friend] = User::factory()->count(2)->create();
         $t = $this->tournament($me, $friend);
         $game = $this->game($t);
         $base = "/games/{$game->public_id}/events";
 
-        $this->event($friend, $game, $t->players->first(), 'draw');
+        $this->event($me, $game, $t->players->first(), 'draw');
         $event = $game->events()->first();
 
         $this->actingAs($friend)->post("$base/{$event->id}/lock")->assertForbidden();
         $this->actingAs($me)->post("$base/{$event->id}/lock");
         $this->assertTrue($event->fresh()->locked);
 
-        $this->actingAs($friend)->delete("$base/{$event->id}")->assertSessionHasErrors('game');
+        $this->actingAs($friend)->delete("$base/{$event->id}")->assertForbidden();
+        $this->actingAs($me)->delete("$base/{$event->id}")->assertSessionHasErrors('game');
         $this->assertDatabaseHas('score_events', ['id' => $event->id]);
 
         $this->actingAs($me)->post("$base/{$event->id}/lock");
-        $this->actingAs($friend)->delete("$base/{$event->id}");
+        $this->actingAs($me)->delete("$base/{$event->id}");
         $this->assertDatabaseMissing('score_events', ['id' => $event->id]);
     }
 
@@ -282,14 +298,18 @@ class TournamentFlowTest extends TestCase
         $this->assertNull($t->fresh()->target_reached_at);
 
         $this->actingAs($me)->post("$base/target", ['target_score' => 20])->assertSessionHasErrors('target_score');
+        $this->actingAs($friend)->post("$base/target", ['target_score' => 500])->assertForbidden();
     }
 
     public function test_timeout_gives_warnings_first_then_penalty_and_draw(): void
     {
         [$me, $friend] = User::factory()->count(2)->create();
         $t = $this->tournament($me, $friend, [
-            'time_limit_enabled' => 1, 'turn_time_limit' => 30, 'warnings_allowed' => 1,
-            'timeout_penalty_points' => 5, 'timeout_draw_tile' => 1,
+            'time_limit_enabled' => 1,
+            'turn_time_limit' => 30,
+            'warnings_allowed' => 1,
+            'timeout_penalty_points' => 5,
+            'timeout_draw_tile' => 1,
         ]);
         $p = $t->players->first();
         $url = "/games/{$this->game($t)->public_id}/timeout";
@@ -317,6 +337,6 @@ class TournamentFlowTest extends TestCase
         $turn = $json->json('recent.0');
         $this->assertSame(3 + 10 + 40 - 5, $turn['total']);
         $this->assertContains('Eerste steen met drie dezelfde cijfers van het spel', array_column($turn['lines'], 'text'));
-        $this->get('/live/'.str_repeat('x', 40))->assertNotFound();
+        $this->get('/live/' . str_repeat('x', 40))->assertNotFound();
     }
 }

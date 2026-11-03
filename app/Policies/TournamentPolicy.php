@@ -12,10 +12,10 @@ class TournamentPolicy
         return $tournament->canView($user);
     }
 
-    /** Players of a running toernooi: start spellen, change the target. */
+    /** Creator of a running toernooi: start spellen, change the target. */
     public function play(User $user, Tournament $tournament): bool
     {
-        return $tournament->isActive() && $tournament->hasPlayer($user);
+        return $tournament->isActive() && $tournament->isCreator($user);
     }
 
     public function finish(User $user, Tournament $tournament): bool
