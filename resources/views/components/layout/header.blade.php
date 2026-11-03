@@ -17,7 +17,7 @@
 
 <header class="border-b border-stone-200 bg-white" x-data="{ open: false }">
     <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <a href="{{ route('home') }}" aria-label="{{ config('site.name') }}"><x-site.logo size="14" /></a>
+        <a href="{{ route('home') }}" aria-label="{{ config('site.name') }}"><x-site.logo size="12" /></a>
 
         @unless ($minimal)
             <nav class="hidden items-center gap-1 md:flex" aria-label="Hoofdmenu">
