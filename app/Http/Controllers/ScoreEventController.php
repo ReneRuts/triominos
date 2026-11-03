@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Scoring\ScoreRecorder;
+use App\Http\Requests\DestroyScoreEventRequest;
 use App\Http\Requests\StoreScoreEventRequest;
 use App\Models\Game;
 use App\Models\ScoreEvent;
@@ -49,7 +50,7 @@ class ScoreEventController extends Controller
         return back();
     }
 
-    public function destroy(Game $game, ScoreEvent $event, ScoreRecorder $scores): RedirectResponse
+    public function destroy(DestroyScoreEventRequest $request, Game $game, ScoreEvent $event, ScoreRecorder $scores): RedirectResponse
     {
         Gate::authorize('edit', $game);
 

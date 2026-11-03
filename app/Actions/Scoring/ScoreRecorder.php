@@ -119,20 +119,19 @@ final class ScoreRecorder
     public function delete(Game $game, ScoreEvent $event): void
     {
         if (! $game->isActive()) {
-            throw new RuleViolation('Dit spel is afgesloten.');
+            throw new RuleViolation('Dit spel is afgesloten.', 'game');
         }
 
         if ($event->locked) {
-            throw new RuleViolation('Deze score is vastgezet. De spelmaker kan ze eerst losmaken.');
+            throw new RuleViolation('Deze score is vastgezet. De spelmaker kan ze eerst losmaken.', 'game');
         }
 
         if ($event->type === ScoreEventType::GameEnd) {
-            throw new RuleViolation('Het einde van een spel haal je weg via "Spel heropenen".');
+            throw new RuleViolation('Het einde van een spel haal je weg via "Spel heropenen".', 'game');
         }
 
         $event->delete();
 
-        // Bonuses of the stones after this one depend on it (first triple, 0-0-0 start).
         if ($event->type === ScoreEventType::Tile) {
             GameScorer::recalculate($game);
         }
