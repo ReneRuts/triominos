@@ -37,7 +37,7 @@
 <meta name="robots" content="{{ $robots }}">
 <meta name="theme-color" content="{{ $site['theme_color'] }}">
 <link rel="canonical" href="{{ $canonical }}">
-<link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+<link rel="icon" type="image/svg+xml" href="{{ asset('favicon.ico') }}">
 <link rel="sitemap" type="application/xml" href="{{ route('sitemap') }}">
 
 <meta property="og:site_name" content="{{ $site['name'] }}">
