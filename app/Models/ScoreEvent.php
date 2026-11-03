@@ -13,6 +13,8 @@ class ScoreEvent extends Model
         'points', 'is_manual', 'details', 'locked', 'created_by',
     ];
 
+    protected $touches = ['game'];
+
     protected function casts(): array
     {
         return [
