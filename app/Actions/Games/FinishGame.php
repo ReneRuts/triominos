@@ -19,6 +19,10 @@ final class FinishGame
     /** @param  array<int|string,mixed>  $remainingInput  remaining stone value per player id */
     public function handle(Game $game, GameEnding $ending, int $winnerId, array $remainingInput, User $by): void
     {
+        if (! $game->isActive()) {
+            throw new RuleViolation('Dit spel is al afgesloten.');
+        }
+
         $remaining = [];
         foreach ($game->players->pluck('id') as $id) {
             $remaining[$id] = (int) ($remainingInput[$id] ?? 0);

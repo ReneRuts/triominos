@@ -30,8 +30,8 @@ class GameController extends Controller
         $games = Game::query()
             ->whereNull('tournament_id')
             ->with('ownPlayers.user', 'creator')
-            ->where(fn ($q) => $q->where('creator_id', $userId)
-                ->orWhereHas('ownPlayers', fn ($p) => $p->where('user_id', $userId)))
+            ->where(fn($q) => $q->where('creator_id', $userId)
+                ->orWhereHas('ownPlayers', fn($p) => $p->where('user_id', $userId)))
             ->latest('id')
             ->get();
 
@@ -130,6 +130,21 @@ class GameController extends Controller
         $game->regenerateShareLink();
 
         return back()->with('status', 'Er is een nieuwe link en een nieuw spel-ID aangemaakt. De oude werken niet meer.');
+    }
+
+    public function updateVisibility(Request $request, Game $game)
+    {
+        abort_unless($game->isCreator($request->user()), 403, 'Alleen de maker kan dit aanpassen.');
+
+        $validated = $request->validate([
+            'is_public' => 'required|boolean',
+        ]);
+
+        $game->update([
+            'is_public' => $validated['is_public']
+        ]);
+
+        return back()->with('success', 'Zichtbaarheid van het spel is aangepast.');
     }
 
     public function destroy(Game $game): RedirectResponse

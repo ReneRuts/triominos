@@ -78,6 +78,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/{game}/finish', 'finish')->name('finish');
         Route::post('/{game}/reopen', 'reopen')->name('reopen');
         Route::post('/{game}/link', 'regenerateLink')->name('link');
+        Route::patch('/{game}/visibility', 'updateVisibility')->name('visibility');
         Route::delete('/{game}', 'destroy')->name('destroy');
     });
 

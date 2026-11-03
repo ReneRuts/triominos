@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** A seat at the table: an account or a guest. Belongs to a toernooi or to one standalone spel. */
 class Player extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'tournament_id', 'game_id', 'user_id', 'guest_name', 'position',
         'warnings_used', 'final_points', 'is_winner',

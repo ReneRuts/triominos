@@ -29,7 +29,7 @@ final class ScoreRecorder
             $result = ScoreCalculator::tileScore($digits, $game->mode, $flags + [
                 'first_stone' => $laid->isEmpty(),
                 'triple_available' => ! $laid->contains(
-                    fn ($e) => ScoreCalculator::isTriple((int) $e->digit_a, (int) $e->digit_b, (int) $e->digit_c)
+                    fn($e) => ScoreCalculator::isTriple((int) $e->digit_a, (int) $e->digit_b, (int) $e->digit_c)
                 ),
             ]);
         } catch (InvalidArgumentException $e) {
@@ -163,7 +163,7 @@ final class ScoreRecorder
 
         $current = $game->currentPlayer();
         if ($current && (int) $current->id !== (int) $player->id) {
-            throw new RuleViolation('Het is niet de beurt van deze speler. Bijnemen en passen kan enkel in de beurt van '.$current->name().'.');
+            throw new RuleViolation('Het is niet de beurt van deze speler. Bijnemen en passen kan enkel in de beurt van ' . $current->name() . '.');
         }
     }
 

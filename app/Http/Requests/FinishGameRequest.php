@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\GameEnding;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class FinishGameRequest extends FormRequest
 {
@@ -16,6 +17,17 @@ class FinishGameRequest extends FormRequest
             'remaining' => ['required', 'array'],
             'remaining.*' => ['nullable', 'integer', 'min:0', 'max:5000'],
         ];
+    }
+
+    public function after(): array
+    {
+        return [function (Validator $validator) {
+            $game = $this->route('game');
+
+            if ($game && ! $game->isActive()) {
+                $validator->errors()->add('game', 'Het spel is al afgesloten.');
+            }
+        }];
     }
 
     public function messages(): array
