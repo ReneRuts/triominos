@@ -38,7 +38,7 @@ return [
         ],
     ],
 
-    // Optional cookies set by scripts you add. Fill this in so the cookie page stays correct, e.g.:
+    // Optional cookies set by scripts you add. Fill this in so the cookie page stays correct.
     // ['name' => '_ga', 'provider' => 'Google', 'purpose' => 'Statistieken', 'duration' => '2 jaar'],
     'optional' => [],
 ];
