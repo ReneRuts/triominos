@@ -6,25 +6,22 @@
 */
 
 return [
-    'name' => env('SITE_NAME', 'Triominos Scorebord'),
-    'tagline' => 'Het scorebord voor je Triominos-avond',
+    'name' => env('APP_NAME', 'Triominos Scorebord'),
+    'tagline' => 'Het scorebord voor je Triominos-avonden',
     'description' => 'Houd de score van je Triominos-spel bij: alleen of in een toernooi met vrienden. '
-        .'Met spelregels, handleiding, ranking en live meekijken voor wie niet aan tafel zit.',
+        . 'Met spelregels, handleiding, ranking en live meekijken voor wie niet aan tafel zit.',
     'keywords' => 'triominos, triominos scorebord, triominos punten, triominos spelregels, triominos score bijhouden, triominos toernooi',
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'https://localhost'),
     'locale' => 'nl_BE',
     'theme_color' => '#1f7a6c',
-    'og_image' => 'og-image.png', // 1200x630, put it in /public
+    'og_image' => 'og-image.png',
 
     'owner' => [
-        'name' => '[NAAM VERANTWOORDELIJKE]',
-        'address' => '[STRAAT EN NUMMER, POSTCODE GEMEENTE, LAND]',
-        'email' => '[E-MAILADRES]',
-        'company_number' => '[ONDERNEMINGSNUMMER, INDIEN VAN TOEPASSING]',
+        'name' => 'René Ruts',
+        'email' => 'rene.ruts2@gmail.com',
     ],
-    'hosting' => '[NAAM HOSTINGPARTIJ EN LAND]',
 
-    'policies_updated' => '2 november 2026',
+    'policies_updated' => '3 november 2026',
     'authority' => [
         'name' => 'Gegevensbeschermingsautoriteit (GBA)',
         'url' => 'https://www.gegevensbeschermingsautoriteit.be',

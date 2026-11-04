@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
 
-/** robots.txt and sitemap.xml. Delete public/robots.txt: a static file would win over this route. */
+/** robots.txt and sitemap.xml.*/
 class SeoController extends Controller
 {
     public function robots(): Response
